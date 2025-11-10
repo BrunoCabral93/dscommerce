@@ -1,11 +1,13 @@
 package com.devsuperior.dscommerce.controllers;
 
 import com.devsuperior.dscommerce.dto.ProductDTO;
+import com.devsuperior.dscommerce.entities.Product;
 import com.devsuperior.dscommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -25,11 +27,13 @@ public class ProductController {
       ProductDTO dto = service.findById(id);
       return ResponseEntity.ok(dto);
     }
+
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable){
         Page<ProductDTO> dto = service.findAll(pageable);
         return ResponseEntity.ok(dto);
     }
+
     @PostMapping
     public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO dto){
         dto = service.insert(dto);
@@ -37,9 +41,16 @@ public class ProductController {
                 .buildAndExpand(dto.getId()).toUri();
         return  ResponseEntity.created(uri).body(dto);
     }
+
     @PutMapping(value = "/{id}")
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id, @RequestBody ProductDTO dto){
         dto = service.update(id, dto);
         return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id){
+    service.delete(id);
+    return ResponseEntity.noContent().build();
     }
 }
